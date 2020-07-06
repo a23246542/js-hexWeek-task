@@ -86,7 +86,7 @@ function browser() {
     server: {
       baseDir: envOptions.browserDir,
     },
-    port: 8080,
+    port: 8082,
   });
 }
 
@@ -115,8 +115,8 @@ exports.deploy = deploy;
 
 exports.clean = clean;
 
-// exports.build = gulp.series(clean, copyFile, layoutHTML, sass, babel, vendorsJs);
-exports.build = gulp.series(clean, copyFile, layoutHTML, sass, babel);
+exports.build = gulp.series(clean, copyFile, layoutHTML, sass, babel, vendorsJs);
+// exports.build = gulp.series(clean, copyFile, layoutHTML, sass, babel);
 
-// exports.default = gulp.series(clean, copyFile, layoutHTML, sass, babel, vendorsJs, gulp.parallel(browser, watch));
-exports.default = gulp.series(clean, copyFile, layoutHTML, sass, babel, gulp.parallel(browser, watch));
+exports.default = gulp.series(clean, copyFile, layoutHTML, sass, babel, vendorsJs, gulp.parallel(browser, watch));
+// exports.default = gulp.series(clean, copyFile, layoutHTML, sass, babel, gulp.parallel(browser, watch));
