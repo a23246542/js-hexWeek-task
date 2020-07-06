@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="app" class="container my-3">
+        <button id="get" class="btn btn-outline-primary">Get</button>
+        <button id="post" class="btn btn-outline-primary">Post</button>
+        <button id="patch" class="btn btn-outline-primary">Patch</button>
+        <button id="delete" class="btn btn-outline-primary">Delete</button>
+        <button id="deleteAll" class="btn btn-outline-primary">DeleteAll</button>
+    </div>
+    <script>
+        document.querySelector('#get').addEventListener('click', getData);
+        document.querySelector('#post').addEventListener('click', postData);
+        document.querySelector('#patch').addEventListener('click', patchData);
+        document.querySelector('#delete').addEventListener('click', deleteData);
+        document.querySelector('#deleteAll').addEventListener('click', deleteAll);
+
+
+        var uuid = '82a32758-aadc-4405-b535-2f6a678989d8';
+        var token = '7yaPDgRGh5hHKAkAeIUtl1H3yiFQS6wN8a6Cs0gGSFZNYaC45Mi02hhDcHZt';
+        var apiPath = 'https://course-ec-api.hexschool.io/';
+
+        // @@為何沒辦法照這個資料的順序呈現
+        const productData = [
+            {
+            title: '五花薄切火鍋片',
+            category: '肉品',
+            content: `黑豚1983為台灣老黑豬血統與杜洛克品種雜交，肉質Q彈，油脂豐潤。飼養過程使用歐盟及FDA認可之非基改原料作為飼料配方，添加啤酒酵母基與有機硒元素作為輔助，全程履歷生產。
+                                五花火鍋肉片油脂多而完整，適合涮火鍋、煮湯、炒肉片等料理。`,
+            description: `黑豚1983為台灣老黑豬血統與杜洛克品種雜交，肉質Q彈，油脂豐潤。飼養過程使用歐盟及FDA認可之非基改原料作為飼料配方，添加啤酒酵母基與有機硒元素作為輔助，全程履歷生產。
+                                五花火鍋肉片油脂多而完整，適合涮火鍋、煮湯、炒肉片等料理。`,
+            imageUrl: [
+                'https://s3-ap-southeast-1.amazonaws.com/zhonglingdev/resource/goods/5c0e3bbb19d48.jpg'
+            ],
+            enabled: true,
+            origin_price: 99,
+            price: 99,
+            unit: '杯',
+            },
+            {
+            title: '黑葉白菜',
+            category: '蔬菜',
+            content: `黑葉白菜，又名廣東白菜。含有蛋白質、維生素Ｂ群、Ｃ，及鉀、鈣、鐵等礦物質。黑葉白菜葉呈深綠莖為白，莖的部分含水份，切大塊加薑絲或蒜粒大火快炒，不要炒太久，才能吃到清脆口感。`,
+            description: `黑葉白菜，又名廣東白菜。含有蛋白質、維生素Ｂ群、Ｃ，及鉀、鈣、鐵等礦物質。黑葉白菜葉呈深綠莖為白，莖的部分含水份，切大塊加薑絲或蒜粒大火快炒，不要炒太久，才能吃到清脆口感。`,
+            imageUrl: [
+                'https://s3-ap-southeast-1.amazonaws.com/zhonglingdev/resource/goods/item_V2012-0.jpg'
+            ],
+            enabled: true,
+            origin_price: 40,
+            price: 40,
+            unit: '杯',
+            },
+            {
+            title: '虱目魚丸',
+            category: '食品',
+            content: `虱目魚丸以新鮮虱目魚肉製成，不含任何化學添加物及硼砂，鮮甜濃郁、口感Ｑ彈。煮湯、燉煮、酥炸都很適合。`,
+            description: `虱目魚丸以新鮮虱目魚肉製成，不含任何化學添加物及硼砂，鮮甜濃郁、口感Ｑ彈。煮湯、燉煮、酥炸都很適合。`,
+            imageUrl: [
+                'https://s3-ap-southeast-1.amazonaws.com/zhonglingdev/resource/goods/5e4e0639e1797.jpg'
+            ],
+            enabled: true,
+            origin_price: 110,
+            price: 110,
+            unit: '杯',
+            }
+        ]
+        const productId = [];
+        // axios.defaults.headers['Authorization']
+        // axios 設定說明：https://github.com/axios/axios#config-defaults
+        // let headers = {
+        //     "Content-Type": "application/json",
+        //     "Accept": "application/json",
+        //     "Authorization": "Bearer {token}",
+        // };
+
+        let getProductId = (res) => {
+            productId.length = 0;
+            console.log('getProductId',res);
+            res.data.data.forEach(item => {
+                productId.push(item.id)
+            })
+            console.log(productId);
+        }
+
+        axios.defaults.headers['Authorization'] = `Bearer ${token}`; //%%空格
+        function getData() {
+
+            console.log('getData');
+            let api = `${apiPath}api/${uuid}/admin/ec/products`;
+            axios.get(api)
+                .then(function (res) {
+                    console.log(res);
+                    getProductId(res);
+                })
+        }
+
+        async function postData() {
+            console.log('postData');
+            const api = `${apiPath}api/${uuid}/admin/ec/product`;
+            
+            await productData.forEach( async (item) =>{
+
+                await axios.post(api, item)
+                    .then(function (res) {
+                        console.log(res);
+                    })
+            })
+
+            // 442看 preview
+            // {message: "The given data was invalid.", errors: {description: ["description 不能留空。"]}}@@報錯
+        }
+
+        function patchData() {
+            console.log('patchData');
+            productId.forEach((id,index) => {
+
+                let api =`${apiPath}api/${uuid}/admin/ec/product/${id}`;
+                // console.log(api);
+                
+                axios.patch(api, productData[index])
+                    .then(function (res) {
+                        console.log(res);
+                    })
+            })
+        }
+
+        function deleteData() {
+            console.log('deleteData');
+            let api =
+                `${apiPath}api/${uuid}/admin/ec/product/xMTTxg1erlr3nsKHJqilVypKf9VOEpVuWMuF4NW4dKUt5A4sTnN04pjStKrx6hj6`;
+            axios.delete(api)
+                .then(function (res) {
+                    console.log(res);
+                })
+        }
+
+        function deleteAll(){
+            productId.forEach((id,index) => {
+                console.log(id,index);
+                
+                let api =`${apiPath}api/${uuid}/admin/ec/product/${id}`;
+                // console.log(api);
+                axios.delete(api, productData[index])
+                .then(function (res) {
+                    console.log(res);
+                })
+            })
+        }
+    </script>
+</body>
+
+</html>

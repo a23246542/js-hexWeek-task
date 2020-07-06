@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<!--     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css"> -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <title>Document</title>
+    <style>
+
+        .completed {
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<!-- PS D:\Users\sam.yang\Documents\JavaScript> git rm --cached node_modules
+fatal: not removing 'node_modules' recursively without -r -->
+<!-- git rm -r –cached . -->
+<!-- git rm -r --cached node_modules -->
+<!-- node_modules jquery沒出現 -->
+<body>
+    <div id="app" class="container my-3">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    待辦事項
+                </span>
+            </div>
+            <input id="newTodo" type="text" class="form-control" placeholder="準備要做的任務">
+            <div class="input-group-append">
+                <button id="addTodo" class="btn btn-primary" type="button">
+                    新增
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <ul id="todoList" class="list-group list-group-flush">
+                <!-- <li class="list-group-item">
+                    <div class="d-flex">
+                        <div class="form-check" 
+                        data-id="" data-action="complete"
+                        >
+                            <input type="checkbox" class="form-check-input">
+                            <label for="" class="form-check-label"> </label>
+                        </div>
+                        <button type="button" class="close ml-auto" aria-label="Close"
+                        data-id="" data-action="remove"
+                        >
+                            <span aria-hidden="true" class="align-top">&times;</span>
+                        </button>
+                    </div>
+                </li> -->
+            </ul>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <span>有<span id="todoCount">0</span>筆任務</span>
+                    <a id="clearTodo" href="#" class="">清除所有任務</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        // 使用者故事
+        //     用戶可以新增 Todo，新增後移除 input 的項目
+        //     用戶可以刪除、完成 Todo
+        //     用戶可以一鍵刪除所有任務
+        // let todoData = []
+        let todoData = [ //@@不能用const
+            {
+                title: 'css',
+                id: 1246542,
+                completed: false
+            },
+            {
+                title: 'js',
+                id: 12466552,
+                completed: false
+            },
+            {
+                title: 'vue',
+                id: 84766552,
+                completed: false
+            }
+        ]
+
+        const todoInput = document.getElementById('newTodo');
+        const addBtn = document.getElementById('addTodo');
+        const todoList = document.getElementById('todoList');
+        const todoCount = document.getElementById('todoCount');
+        const clearAllBtn = document.getElementById('clearTodo');
+
+        addBtn.addEventListener('click', addTodo);
+        todoList.addEventListener('click', doSomething);
+        clearAllBtn.addEventListener('click', clearAllTodo);
+
+        render(todoData);
+
+        function addTodo() {
+            let value = todoInput.value.trim();
+            console.log(value);
+            console.log(Date.now());
+            let timestamp = Math.floor(Date.now()); //@@為何要floor
+            console.log(timestamp);
+            todoData.push({
+                title: value,
+                id: timestamp,
+                completed: false
+            })
+            todoInput.value = "";
+            render(todoData);
+        }
+
+        function doSomething(e) {
+            console.log(e.target); //裡面的內容
+            console.log(e.target.parentNode); //外面的容器
+            let todoId = e.target.parentNode.dataset.id;
+            let action = e.target.parentNode.dataset.action;
+
+            if (action === 'complete') {
+                console.log('complete');
+                completeTodo(todoId);
+            } else if (action === 'remove') {
+                console.log('remove');
+                removeTodo(todoId);
+            }
+        }
+
+        function completeTodo(todoId) {
+            /*修改資料*/
+            // console.log(todoId, item.id); //##字串&數值
+            todoData.forEach(function (item) {
+                console.log(todoId,item.id);
+                // if( todoId === item.id){
+                if (todoId == item.id) { //%%轉型
+                    item.completed = !item.completed;
+                }
+                return false;//@@無效
+            })
+            console.log(todoData);
+            /*渲染*/
+            render(todoData);
+        }
+
+        function removeTodo(todoId) {
+            let newIndex = 0;
+            /*修改資料*/
+            // todoData.forEach(function(key,item){%%
+            todoData.forEach(function (item, key) {
+                // if(todoId === item.id){
+                if (todoId == item.id) {
+                    newIndex = key;
+                }
+                return;
+            })
+            todoData.splice(newIndex, 1);
+
+            render(todoData);
+        }
+
+        function clearAllTodo(e) {
+            e.preventDefault();
+            todoData = [];
+            render(todoData);
+        }
+
+        function render(todoData) {
+            let str = "";
+            todoData.forEach(function (item) {
+                str += `
+                <li class="list-group-item">
+                    <div class="d-flex">
+                        <div class="form-check" 
+                        data-id="${item.id}" data-action="complete"
+                        >
+                            <input id="${item.id}" ${item.completed?'checked':''}  type="checkbox" class="form-check-input">
+                            <label for="${item.id}" class="form-check-label ${item.completed ? 'completed' : ''}" >${item.title}</label>
+                        </div>
+                        <button type="button" class="close ml-auto" aria-label="Close"
+                        data-id="${item.id}" data-action="remove"
+                        >
+                            <span aria-hidden="true" class="align-top">&times;</span>
+                        </button>
+                    </div>
+                </li>
+                `
+            })
+            todoList.innerHTML = str;
+            // todoCount.innerText = 3;
+            todoCount.textContent = todoData.length;
+        }
+    </script>
+</body>
+
+</html>
