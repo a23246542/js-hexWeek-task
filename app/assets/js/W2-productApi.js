@@ -1,3 +1,6 @@
+// import "./vendors.js";
+// var axios = require("axios");
+
 const productPage = document.querySelector('#app').children[0];
 // const productPage = document.querySelector('#app').childNodes[0];@@文字 差別
 
