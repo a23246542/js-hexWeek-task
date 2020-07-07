@@ -58,7 +58,8 @@ let envOptions = {
     clean: {
         src: distPath,
     },
-    browserDir: `${distPath}/index.html`,
+    // browserDir: `${distPath}/index.html`,
+    browserDir: `${distPath}`,
     deploySrc: `${distPath}/**/*`,
 };
 
