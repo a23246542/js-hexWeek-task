@@ -108,6 +108,8 @@
             console.log('postData');
             const api = `${apiPath}api/${uuid}/admin/ec/product`;
             
+            // =============用async/await的作法=========
+            // #1 forEach用不了
             // await productData.forEach( async (item) =>{
 
             //     await axios.post(api, item)
@@ -116,6 +118,7 @@
             //         })
             // })
 
+            // #2 用原始for迴圈 成功
             // for(let i = 0;i<productData.length;i++){
             //     await axios.post(api,productData[i])
             //         .then(function (res) {
@@ -123,11 +126,9 @@
             //         })
             // }
             
-
-            // promiseFn(){
-
-            // }
-
+            
+            // ==========promise嘗試======================
+                // #1沒封裝直接寫失敗
             // axios.post(api,productData[0])
             //     .then(res => {
             //         console.log(res);
@@ -149,6 +150,7 @@
             //     })
                 
             
+            // #2 封裝new promise 好判斷參數直接給resolve 或reject
             function promiseFn(res) {
                 return new Promise((resolve, reject) => {
                     if(res){
@@ -159,25 +161,71 @@
                 })
             }
 
+            // %% 但是axios本身就是封裝promise 跟設定ajax判斷好了 可以不用再包 
+            // axios.post(api, productData[0])
+            //     .then(res=>{
+            //         console.log(res); 
+            //         return promiseFn(res);//前一次有回傳內容就執行下一個promise
+            //     })
+            //     .then(()=>{
+            //         axios.post(api,productData[1])
+            //         .then(res=>{
+            //             console.log(res);
+            //             return promiseFn(res);//前一次有回傳內容就執行下一個promise
+            //         })
+            //         .then(()=>{
+            //             axios.post(api, productData[2])
+            //             .then(res=>{
+            //                 console.log(res);
+                            
+            //             })
+            //         })
+            //     })
+            
+            // ##如果硬要用promise包 自己改成這樣
             axios.post(api, productData[0])
                 .then(res=>{
                     console.log(res); 
                     return promiseFn(res);//前一次有回傳內容就執行下一個promise
                 })
                 .then(()=>{
-                    axios.post(api,productData[1])
+                    return axios.post(api,productData[1])
                     .then(res=>{
                         console.log(res);
-                        return promiseFn(res);//前一次有回傳內容就執行下一個promise
+                        // return promiseFn(res);//前一次有回傳內容就執行下一個promise
+                        // return res//好像可有可無
                     })
-                    .then(()=>{
-                        axios.post(api, productData[2])
-                        .then(res=>{
-                            console.log(res);
+                    // .then(()=>{
+                    //     axios.post(api, productData[2])
+                    //     .then(res=>{
+                    //         console.log(res);
                             
-                        })
+                    //     })
+                    // })
+                })
+                .then(()=>{
+                    return axios.post(api, productData[2])
+                    .then(res=>{
+                        console.log(res);
+                          
                     })
                 })
+            // #3 成功版本 直接return axios.post()  = return new Promise()
+            // ajax有結果就會直接跑resolve(res) .then(res)
+            // axios.post(api, productData[0])
+            //     .then(res=>{
+            //         console.log(res); 
+            //         return axios.post(api,productData[1])
+            //     })
+            //     .then((res)=>{
+            //         console.log(res);
+            //         return axios.post(api,productData[2])
+                    
+            //     })
+            //     .then((res)=>{
+            //         console.log(res);
+                    
+            //     })
                 
 
 
