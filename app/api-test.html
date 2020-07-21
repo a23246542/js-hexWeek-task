@@ -27,7 +27,7 @@
 
 
         var uuid = '82a32758-aadc-4405-b535-2f6a678989d8';
-        var token = '7yaPDgRGh5hHKAkAeIUtl1H3yiFQS6wN8a6Cs0gGSFZNYaC45Mi02hhDcHZt';
+        var token = 'OtfwZavtchfawmTFxwUuZBTSryvnbryc9wP9t6QEb2p4JTv2w2yKEif7cgWq';
         var apiPath = 'https://course-ec-api.hexschool.io/';
 
         // @@為何沒辦法照這個資料的順序呈現
@@ -108,17 +108,84 @@
             console.log('postData');
             const api = `${apiPath}api/${uuid}/admin/ec/product`;
             
-            await productData.forEach( async (item) =>{
+            // await productData.forEach( async (item) =>{
 
-                await axios.post(api, item)
-                    .then(function (res) {
+            //     await axios.post(api, item)
+            //         .then(function (res) {
+            //             console.log(res);
+            //         })
+            // })
+
+            // for(let i = 0;i<productData.length;i++){
+            //     await axios.post(api,productData[i])
+            //         .then(function (res) {
+            //             console.log(res);
+            //         })
+            // }
+            
+
+            // promiseFn(){
+
+            // }
+
+            // axios.post(api,productData[0])
+            //     .then(res => {
+            //         console.log(res);
+            //         resolve()
+            //     })
+            //     .then(() => {
+            //         axios.post(api,productData[1])
+            //         .then(res => {
+            //             console.log(res);
+            //             resolve()
+            //         })
+            //     })
+            //     .then(() => {
+            //         axios.post(api,productData[2])
+            //         .then( res => {
+            //             console.log(res);
+                        
+            //         })
+            //     })
+                
+            
+            function promiseFn(res) {
+                return new Promise((resolve, reject) => {
+                    if(res){
+                        resolve();
+                    }else{
+                        reject(new Error)
+                    }
+                })
+            }
+
+            axios.post(api, productData[0])
+                .then(res=>{
+                    console.log(res); 
+                    return promiseFn(res);//前一次有回傳內容就執行下一個promise
+                })
+                .then(()=>{
+                    axios.post(api,productData[1])
+                    .then(res=>{
                         console.log(res);
+                        return promiseFn(res);//前一次有回傳內容就執行下一個promise
                     })
-            })
+                    .then(()=>{
+                        axios.post(api, productData[2])
+                        .then(res=>{
+                            console.log(res);
+                            
+                        })
+                    })
+                })
+                
+
+
 
             // 442看 preview
             // {message: "The given data was invalid.", errors: {description: ["description 不能留空。"]}}@@報錯
         }
+        
 
         function patchData() {
             console.log('patchData');
